@@ -9,7 +9,7 @@ const pwdConf = document.getElementById("password-conf");
 const errorBox = document.querySelector("#error-box");
 const emailErrorBox = document.getElementById("email-error");
 const countryErrorBox = document.getElementById("country-error");
-const postalErrorBox = document.getElementById("postal-code-error");
+const postalCodeErrorBox = document.getElementById("postal-code-error");
 const pwdErrorBox = document.getElementById("password-error");
 const pwdConfErrorBox = document.getElementById("password-conf-error");
 
@@ -18,15 +18,26 @@ let errorMessage = "";
 const inputs = [email, country, postalCode, pwd, pwdConf];
 
 inputs.forEach((input) => {
+    if (!input) return; // skip if input is not found or null
+    
+    input.dataset.touched = "false"; // mark all inputs as untouched initially
+
+    input.addEventListener("blur", (e) => {
+        input.dataset.touched = "true"; // mark input as touched on blur
+    });
+
     input.addEventListener("input", (e) => {
         const errEl = document.getElementById(`${input.id}-error`);
         if (input.validity.valid) {
             // clear field-specific error UI
             errEl.textContent = "";
-            errEl.className = "error";
+            errEl.className = "";
             // hide global box if no inputs have errors
-            const anyErrors = inputs.some(i => !i.validity.valid);
-            if (!anyErrors) errorBox.className = "";
+            const anyVisibleErrors = inputs.some(i => 
+                i.dataset.touched === "true" &&
+                !i.validity.valid);
+            console.log("Any errors remaining: " + anyVisibleErrors);
+            if (!anyVisibleErrors) errorBox.className = "";
         } else {
             showError(input);
         }
@@ -44,6 +55,16 @@ form.addEventListener("submit", (e) => {
     });
 });
 
+function updateGlobalErrorBox() {
+    const anyVisibleErrors = inputs.some(
+        input =>
+            input.dataset.touched === "true" &&
+            !input.validity.valid
+    );
+
+    errorBox.className = anyVisibleErrors ? "active" : "";
+}
+
 function showError(target) {
     const errEl = document.getElementById(`${target.id}-error`);
     // clear previous error messages
@@ -51,36 +72,44 @@ function showError(target) {
     errorMessage = "";
     // common checks
     if (target.validity.valueMissing) {
-        errorMessage = `${target} is a required input`;
+        errorMessage = `${target.id} is a required input`;
         errEl.textContent += errorMessage + "\n";
+        errEl.className = "error";
     }
     if (target.validity.typeMismatch) {
-        errorMessage = `${target} should be of type ${target.type}`;
+        errorMessage = `${target.id} should be of type ${target.type}`;
         errEl.textContent += errorMessage + "\n";
+        errEl.className = "error";
     }
 
     //Specific checks
     if (target.id === "postal-code") {
         if (target.validity.rangeOverflow) {
-            errorMessage = `${target} should be between ${target.min} and ${target.max}`;
+            errorMessage = `${target.id} should be between ${target.min} and ${target.max}`;
             errEl.textContent += errorMessage + "\n";
+            errEl.className = "error";
         }
         if (target.validity.rangeUnderflow) {
-            errorMessage = `${target} should be between ${target.min} and ${target.max}`;
+            errorMessage = `${target.id} should be between ${target.min} and ${target.max}`;
             errEl.textContent += errorMessage + "\n";
+            errEl.className = "error";
         }
     }
     if (target.id === "password") {
         if (target.validity.tooShort) {
-            errorMessage = `${target} should have at least ${target.maxlength} characters, you entered ${target.length}`;
+            errorMessage = `${target.id} should have at least ${target.minLength} characters, you entered ${target.value.length}`;
             errEl.textContent += errorMessage + "\n";
+            errEl.className = "error";
+        }
+    }
+    if (target.id === "password-conf") {
+        if (target.value !== pwd.value) {
+            errorMessage = `Password confirmation should match password`;
+            errEl.textContent += errorMessage + "\n";
+            errEl.className = "error";
         }
     }
 
     //Active the error class to highlight the errors
     errorBox.className = "active";
 }
-
-
-
-

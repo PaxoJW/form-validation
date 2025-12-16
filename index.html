@@ -11,20 +11,21 @@
         <form action="submit" novalidate>
             <label for="email">Email:</label>
             <input type="email" name="email" id="email" required>
-            <label for="contry">Country:</label>
-            <input type="text" name="contry" id="contry" required>
+            <label for="country">Country:</label>
+            <input type="text" name="country" id="country" required>
             <label for="postal-code">Postal code:</label>
             <input type="number" name="postal-code" id="postal-code" max="4000" min="3000" required>
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" minlength="8" required>
             <label for="password-conf">Password confirmation:</label>
             <input type="password" name = "password-conf" id="password-conf" minlength="8" required>
+            <button>Submit</button>
             <p id="error-box">
-                <span class="error" id="email-error" aria-live="polite"></span>
-                <span class="error" id="country-error" aria-live="polite"></span>
-                <span class="error" id="postal-code-error" aria-live="polite"></span>
-                <span class="error" id="password-error" aria-live="polite"></span>
-                <span class="error" id="password-conf-error" aria-live="polite"></span>
+                <span id="email-error" aria-live="polite"></span>
+                <span id="country-error" aria-live="polite"></span>
+                <span id="postal-code-error" aria-live="polite"></span>
+                <span id="password-error" aria-live="polite"></span>
+                <span id="password-conf-error" aria-live="polite"></span>
             </p>
         </form>
     </div>
